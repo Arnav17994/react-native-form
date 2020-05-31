@@ -1,5 +1,5 @@
 import React from 'react';
-import {View} from 'react-native';
+import {View, Alert} from 'react-native';
 import Form from './src/form';
 import {
   nameValidation,
@@ -75,6 +75,15 @@ const phase1 = [
       description: 'Please select your age range',
       multiple: true,
       initialValue: [50, 55],
+    },
+  },
+  {
+    type: 'datetimepicker',
+    props: {
+      title: 'Appointment Date',
+      stateKey: 'apptDate',
+      type: 'datetime',
+      mandatory: true,
     },
   },
 ];

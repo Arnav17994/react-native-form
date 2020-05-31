@@ -10,6 +10,7 @@ import {
 import CTextInput from './components/text-input';
 import SelectionChips from './components/selection-chips';
 import CPicker from './components/picker';
+import Calendar from './components/calendar';
 import styles from './styles';
 
 interface Props {
@@ -102,6 +103,17 @@ const Form = (props: Props) => {
             case 'picker':
               return (
                 <CPicker
+                  key={`form-element-${index}`}
+                  {...item.props}
+                  updateParent={updateParent}
+                  phase={indexItem}
+                  updateValidationState={updateValidationState}
+                  showValidations={showValidations}
+                />
+              );
+            case 'datetimepicker':
+              return (
+                <Calendar
                   key={`form-element-${index}`}
                   {...item.props}
                   updateParent={updateParent}
