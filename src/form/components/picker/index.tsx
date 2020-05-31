@@ -58,7 +58,7 @@ const CPicker = (props: Props) => {
   React.useEffect(() => {
     updateParent(
       stateKey,
-      Object.keys(value).map((item) => JSON.parse(item)),
+      Object.keys(value).map((item) => JSON.parse(item).value),
     );
     if (!mandatory) {
       if (!Object.keys(value).length) {
@@ -100,10 +100,14 @@ const CPicker = (props: Props) => {
   const getFieldColor = () => {
     if (showValidations && validation && !validation(value)) return '#770000';
     if (!touched && validation && !validation(value)) return '#000';
-    if (!Object.keys(value).length && !!mandatory) return '#770000';
-    if (!Object.keys(value).length && !mandatory) return '#000';
-    if (validation && !validation(value)) return '#770000';
-    if (validation && validation(value)) return '#00f';
+    if (!Object.keys(value).length) {
+      if (mandatory) return '#770000';
+      return '#000';
+    }
+    if (validation) {
+      if (!validation(value)) return '#770000';
+      return '#00f';
+    }
   };
 
   const getFieldValidationString = () => {
@@ -126,6 +130,49 @@ const CPicker = (props: Props) => {
     if (!touched || !mandatory) return '';
   };
 
+  const renderOptions = () => (
+    <ScrollView>
+      {options
+        .filter((item) => JSON.stringify(item).includes(searchValue))
+        .map((item: {title: string; value: any}, index: number) => (
+          <TouchableOpacity
+            key={`picker-item-${index}`}
+            style={[
+              styles.pickerItem,
+              {
+                borderColor: JSON.stringify(item) in value ? '#00f' : '#a9a9a9',
+              },
+            ]}
+            onPress={() => setSelectedValues(item)}>
+            <Text
+              style={[
+                styles.value,
+                {
+                  color: JSON.stringify(item) in value ? '#00f' : '#a9a9a9',
+                },
+              ]}>
+              {item.title}
+            </Text>
+          </TouchableOpacity>
+        ))}
+    </ScrollView>
+  );
+
+  const renderSelectedOptions = () => (
+    <View style={styles.selectedOptionsContainer}>
+      {Object.keys(value).map((item, index) => (
+        <View key={`selected-item-${index}`} style={styles.chip}>
+          <Text style={styles.chipTitle}>{JSON.parse(item).title}</Text>
+          <TouchableOpacity
+            style={styles.deleteBtn}
+            onPress={() => setSelectedValues(JSON.parse(item))}>
+            <Image source={close} style={styles.delete} resizeMode="contain" />
+          </TouchableOpacity>
+        </View>
+      ))}
+    </View>
+  );
+
   return (
     <>
       <View style={styles.buttonContainer}>
@@ -138,6 +185,7 @@ const CPicker = (props: Props) => {
         <Text>{title}</Text>
         <Image source={expand} style={styles.close} resizeMode="contain" />
       </TouchableOpacity>
+      {renderSelectedOptions()}
       <Modal
         hardwareAccelerated
         animationType="slide"
@@ -164,37 +212,7 @@ const CPicker = (props: Props) => {
               onChangeText={setSearchValue}
               placeholder={'Search...'}
             />
-            <ScrollView>
-              {options
-                .filter((item) => JSON.stringify(item).includes(searchValue))
-                .map((item: {title: string; value: any}, index: number) => (
-                  <TouchableOpacity
-                    key={`picker-item-${index}`}
-                    style={[
-                      styles.pickerItem,
-                      {
-                        borderColor:
-                          JSON.stringify(item.value) in value
-                            ? '#00f'
-                            : '#a9a9a9',
-                      },
-                    ]}
-                    onPress={() => setSelectedValues(item.value)}>
-                    <Text
-                      style={[
-                        styles.value,
-                        {
-                          color:
-                            JSON.stringify(item.value) in value
-                              ? '#00f'
-                              : '#a9a9a9',
-                        },
-                      ]}>
-                      {item.title}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-            </ScrollView>
+            {renderOptions()}
           </View>
         </View>
       </Modal>

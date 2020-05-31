@@ -41,4 +41,13 @@ export default StyleSheet.create({
     marginVertical: 16,
   },
   progress: {fontSize: 16, fontWeight: 'bold', color: '#fff'},
+  container: {flex: 1},
+  progressBarContainer: {
+    alignItems: 'center',
+    borderBottomColor: '#afafaf',
+    borderBottomWidth: 5,
+  },
+  disabled: {backgroundColor: '#666666'},
+  progressMarker: {flexDirection: 'row', alignItems: 'center'},
+  divider: {height: 1, width: 50},
 });

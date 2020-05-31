@@ -55,44 +55,52 @@ const CTextInput = (props: Props) => {
     }
   }, [value]);
 
+  const animateCollapse = () => {
+    Animated.parallel([
+      Animated.timing(placeholderPosition, {
+        toValue: -10,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(fontSize, {
+        toValue: 0.8,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  const animateExpand = () => {
+    Animated.parallel([
+      Animated.timing(placeholderPosition, {
+        toValue: 8,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacity, {
+        toValue: 0.5,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(fontSize, {
+        toValue: 1.2,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
   React.useEffect(() => {
     if (!showPlaceholder) {
-      Animated.parallel([
-        Animated.timing(placeholderPosition, {
-          toValue: -10,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        Animated.timing(fontSize, {
-          toValue: 0.8,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-      ]).start();
+      animateCollapse();
     }
     if (showPlaceholder) {
-      Animated.parallel([
-        Animated.timing(placeholderPosition, {
-          toValue: 8,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacity, {
-          toValue: 0.5,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        Animated.timing(fontSize, {
-          toValue: 1.2,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-      ]).start();
+      animateExpand();
     }
   }, [showPlaceholder]);
 
@@ -110,10 +118,14 @@ const CTextInput = (props: Props) => {
   const getFieldColor = () => {
     if (showValidations && validation && !validation(value)) return '#770000';
     if (!touched && validation && !validation(value)) return '#000';
-    if (!value && !!mandatory) return '#770000';
-    if (!value && !mandatory) return '#000';
-    if (value && validation && !validation(value)) return '#770000';
-    if (value && validation && validation(value)) return '#00f';
+    if (!value) {
+      if (mandatory) return '#770000';
+      return '#000';
+    }
+    if (value && validation) {
+      if (!validation(value)) return '#770000';
+      return '#00f';
+    }
   };
 
   const getFieldValidationString = () => {
@@ -121,9 +133,10 @@ const CTextInput = (props: Props) => {
       if (validation && value && !validation(value)) return 'Invalid Input';
       if (!value && mandatory) return 'Required Field';
     }
-    if (touched && value && validation && validation(value)) return '';
-    if (touched && value && validation && !validation(value))
+    if (touched && value && validation) {
+      if (validation(value)) return '';
       return 'Invalid Input';
+    }
     if (mandatory && touched && !value) return 'Required Field';
     if (!touched || !mandatory) return '';
   };

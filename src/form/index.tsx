@@ -149,7 +149,7 @@ const Form = (props: Props) => {
   };
 
   const moveToNext = () => {
-    console.log(listRef, isDisabled(), validations);
+    console.log('formState', formState);
     if (isDisabled()) {
       return;
     }
@@ -167,48 +167,75 @@ const Form = (props: Props) => {
       listRef.current.scrollToIndex({animated: true, index});
   };
 
-  return (
-    <View style={{flex: 1}}>
-      <View
-        style={{
-          alignItems: 'center',
-          borderBottomColor: '#afafaf',
-          borderBottomWidth: 5,
-        }}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.progressContainer}>
-          {new Array(phases.length).fill(1).map((item, index) => (
-            <View
-              key={`progress-marker-${index}`}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
+  const renderProgressBar = () => (
+    <View style={styles.progressBarContainer}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.progressContainer}>
+        {new Array(phases.length).fill(1).map((item, index) => (
+          <View
+            key={`progress-marker-${index}`}
+            style={[
+              styles.progressMarker,
+              {
                 marginLeft: index === 0 ? 50 : 0,
                 marginRight: index === phases.length - 1 ? 50 : 0,
-              }}>
-              <TouchableOpacity
-                onPress={() => moveToPhase(index)}
+              },
+            ]}>
+            <TouchableOpacity
+              onPress={() => moveToPhase(index)}
+              style={[
+                styles.progressBar,
+                {backgroundColor: index <= page ? '#00f' : '#a9a9a9'},
+              ]}>
+              <Text style={styles.progress}>{index}</Text>
+            </TouchableOpacity>
+            {index < phases.length - 1 ? (
+              <View
                 style={[
-                  styles.progressBar,
-                  {backgroundColor: index <= page ? '#00f' : '#a9a9a9'},
-                ]}>
-                <Text style={styles.progress}>{index}</Text>
-              </TouchableOpacity>
-              {index < phases.length - 1 ? (
-                <View
-                  style={{
-                    height: 1,
+                  styles.divider,
+                  {
                     backgroundColor: index < page ? '#00f' : '#a9a9a9',
-                    width: 50,
-                  }}
-                />
-              ) : null}
-            </View>
-          ))}
-        </ScrollView>
-      </View>
+                  },
+                ]}
+              />
+            ) : null}
+          </View>
+        ))}
+      </ScrollView>
+    </View>
+  );
+
+  const renderBottomCTAs = () => (
+    <View style={styles.ctaContainer}>
+      <TouchableOpacity
+        disabled={page === 0}
+        style={[styles.cta, page === 0 ? styles.disabled : {}]}
+        onPress={moveToPrevious}>
+        <Text style={styles.title}>{'Prev'}</Text>
+      </TouchableOpacity>
+      {page === phases.length - 1 ? (
+        <TouchableOpacity style={styles.cta} onPress={onPress}>
+          <Text style={styles.title}>{'Submit'}</Text>
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity
+          disabled={page === phases.length - 1}
+          style={styles.cta}
+          onPress={moveToNext}>
+          <Text style={styles.title}>{'Next'}</Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+
+  const keyExtractor = (item: any, index: number) =>
+    `item-${item.config.type}-${index}`;
+
+  return (
+    <View style={styles.container}>
+      {renderProgressBar()}
       <FlatList
         data={phases}
         horizontal={true}
@@ -216,32 +243,13 @@ const Form = (props: Props) => {
         pagingEnabled
         scrollEnabled={false}
         showsHorizontalScrollIndicator={false}
-        keyExtractor={(item, index) => `item-${item.config.type}-${index}`}
+        keyExtractor={keyExtractor}
         viewabilityConfig={viewabilityConfig.current}
         getItemLayout={getItemLayout.current}
         onViewableItemsChanged={onViewableItemsChanged.current}
         ref={listRef}
       />
-      <View style={styles.ctaContainer}>
-        <TouchableOpacity
-          disabled={page === 0}
-          style={[styles.cta, page === 0 ? {backgroundColor: '#666666'} : {}]}
-          onPress={moveToPrevious}>
-          <Text style={styles.title}>{'Prev'}</Text>
-        </TouchableOpacity>
-        {page === phases.length - 1 ? (
-          <TouchableOpacity style={styles.cta} onPress={onPress}>
-            <Text style={styles.title}>{'Submit'}</Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            disabled={page === phases.length - 1}
-            style={styles.cta}
-            onPress={moveToNext}>
-            <Text style={styles.title}>{'Next'}</Text>
-          </TouchableOpacity>
-        )}
-      </View>
+      {renderBottomCTAs()}
     </View>
   );
 };

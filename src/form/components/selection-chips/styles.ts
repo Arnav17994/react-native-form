@@ -14,4 +14,10 @@ export default StyleSheet.create({
     margin: 8,
     height: 40,
   },
+  titleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  fieldValidation: {margin: 8, fontSize: 10},
 });

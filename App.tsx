@@ -74,7 +74,7 @@ const phase1 = [
       stateKey: 'ageRange',
       description: 'Please select your age range',
       multiple: true,
-      initialValue: [50, 55],
+      initialValue: {title: '50 - 55', value: [50, 55]},
     },
   },
   {
@@ -103,7 +103,10 @@ const phase2 = [
       stateKey: 'salaryRange',
       description: 'Please select your salary range',
       multiple: true,
-      initialValue: [50001, 75000],
+      initialValue: {
+        title: 'Rs. 75,001 - Rs. 1,00,000',
+        value: [75000, 100000],
+      },
     },
   },
   {

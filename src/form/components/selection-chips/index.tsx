@@ -76,8 +76,10 @@ const SelectionChips = (props: Props) => {
       (val && value.indexOf(val) === -1)
     )
       return '#000';
-    if (!value.length && !!mandatory) return '#770000';
-    if (!value.length && !mandatory) return '#000';
+    if (!value.length) {
+      if (mandatory) return '#770000';
+      return '#000';
+    }
     if (value && validation && !validation(value)) return '#770000';
     if (
       (value && validation && validation(value)) ||
@@ -92,9 +94,10 @@ const SelectionChips = (props: Props) => {
         return 'Invalid Input';
       if (!value.length && mandatory) return 'Required Field';
     }
-    if (touched && value.length && validation && validation(value)) return '';
-    if (touched && value.length && validation && !validation(value))
+    if (touched && value.length && validation) {
+      if (validation(value)) return '';
       return 'Invalid Input';
+    }
     if (mandatory && touched && !value.length) return 'Required Field';
     if (!touched || !mandatory) return '';
   };
@@ -108,14 +111,9 @@ const SelectionChips = (props: Props) => {
 
   return (
     <View style={styles.container}>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}>
+      <View style={styles.titleContainer}>
         <Text style={styles.title}>{title}</Text>
-        <Text style={{color: getFieldColor(), margin: 8, fontSize: 10}}>
+        <Text style={[styles.fieldValidation, {color: getFieldColor()}]}>
           {getFieldValidationString()}
         </Text>
       </View>
