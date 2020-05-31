@@ -128,12 +128,7 @@ const CPicker = (props: Props) => {
 
   return (
     <>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}>
+      <View style={styles.buttonContainer}>
         <Text style={styles.modalTitle}>{title}</Text>
         <Text style={{color: getFieldColor()}}>
           {getFieldValidationString()}

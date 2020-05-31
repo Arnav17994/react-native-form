@@ -40,4 +40,9 @@ export default StyleSheet.create({
   modalTitle: {marginLeft: 16, fontWeight: 'bold'},
   close: {height: 18, width: 18},
   titleContainer: {flexDirection: 'row', justifyContent: 'space-between'},
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
 });
