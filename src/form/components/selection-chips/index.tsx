@@ -115,7 +115,7 @@ const SelectionChips = (props: Props) => {
           alignItems: 'center',
         }}>
         <Text style={styles.title}>{title}</Text>
-        <Text style={{color: getFieldColor(), margin: 8}}>
+        <Text style={{color: getFieldColor(), margin: 8, fontSize: 10}}>
           {getFieldValidationString()}
         </Text>
       </View>

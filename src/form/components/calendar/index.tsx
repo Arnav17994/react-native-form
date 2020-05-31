@@ -1,6 +1,6 @@
 import React from 'react';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
-import {TouchableOpacity, Text, Image} from 'react-native';
+import {TouchableOpacity, Text, Image, View} from 'react-native';
 import styles from './styles';
 
 const expand = require('../../../assets/arrow-down.png');
@@ -14,6 +14,7 @@ interface Props {
   phase: number;
   mandatory?: boolean;
   showValidations: boolean;
+  allowPastDates?: boolean;
 }
 
 const Calendar = (props: Props) => {
@@ -26,6 +27,7 @@ const Calendar = (props: Props) => {
     phase,
     mandatory,
     showValidations,
+    allowPastDates = false,
   } = props;
 
   const [selectedDate, setSelectedDate] = React.useState(new Date());
@@ -35,6 +37,8 @@ const Calendar = (props: Props) => {
 
   const [isClockVisible, setClockVisible] = React.useState(false);
 
+  const [touched, setTouched] = React.useState(false);
+
   React.useEffect(() => {
     if (!mandatory) {
       updateValidationState(phase, stateKey, true);
@@ -42,6 +46,9 @@ const Calendar = (props: Props) => {
   }, []);
 
   const handleOpenPress = () => {
+    if (!touched) {
+      setTouched(true);
+    }
     if (type === 'time') {
       setClockVisible(true);
     } else {
@@ -95,7 +102,12 @@ const Calendar = (props: Props) => {
 
   return (
     <>
-      <Text style={styles.title}>{title}</Text>
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>{title}</Text>
+        {showValidations && mandatory && !touched ? (
+          <Text style={styles.error}>{'Required Field'}</Text>
+        ) : null}
+      </View>
       <TouchableOpacity style={styles.container} onPress={handleOpenPress}>
         <Text>{getCTATitle()}</Text>
         <Image source={expand} style={styles.image} resizeMode="contain" />
@@ -103,6 +115,7 @@ const Calendar = (props: Props) => {
       {isCalendarVisible ? (
         <RNDateTimePicker
           value={selectedDate}
+          minimumDate={allowPastDates ? null : new Date()}
           mode={'date'}
           onChange={onDateSelect}
         />

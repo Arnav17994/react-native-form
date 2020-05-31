@@ -13,4 +13,10 @@ export default StyleSheet.create({
   },
   image: {height: 18, width: 18},
   title: {marginLeft: 16, fontWeight: 'bold'},
+  error: {color: '#770000', marginHorizontal: 16, fontSize: 10},
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
 });
